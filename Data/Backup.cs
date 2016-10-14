@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using MarkoutBackupViewer.Common;
 
@@ -13,13 +14,28 @@ namespace MarkoutBackupViewer.Data
         /// конструктор
         /// </summary>
         /// <param name="filePath"></param>
-        /// <param name="content"></param>
-        public Backup(string filePath, ContentStorage content)
+        public Backup(string filePath)
         {
             FilePath = filePath;
-            using (var stream = new MemoryStream(filePath.ReadAllBytes()))
-                Table = new Table(stream);
-            Content = content;
+            using (var stream = File.OpenRead(filePath))
+            {
+                // сигнатура
+                if (stream.ReadString() != "Markout Backup")
+                    throw new NotSupportedException("Invalid backup file signature");
+                // версия
+                if (stream.ReadInt32() != 1)
+                    throw new NotSupportedException("Unsupported backup file version");
+                // таблица документов
+                using (var memoryStream = new MemoryStream(stream.ReadBlob()))
+                    Table = new Table(memoryStream);
+                // содержимое
+                while (stream.ReadBool())
+                {
+                    var key = stream.ReadString();
+                    var content = stream.ReadBlob();
+                    Content[key] = content;
+                }
+            }
             // подгрузим документы
             foreach (var row in Table)
                 Documents[row.ID] = new Document(this, row);
@@ -31,9 +47,9 @@ namespace MarkoutBackupViewer.Data
         public readonly string FilePath;
 
         /// <summary>
-        /// хранилище бинарного содержимого
+        /// бинарное содержимое
         /// </summary>
-        public readonly ContentStorage Content;
+        private readonly Dictionary<string,byte[]> Content = new Dictionary<string, byte[]>();
 
         /// <summary>
         /// таблица с данными
@@ -119,6 +135,20 @@ namespace MarkoutBackupViewer.Data
             if (Crypto == null)
                 return data;
             return Crypto.Decrypt(data);
+        }
+
+        /// <summary>
+        /// получить бинарное содержимое
+        /// </summary>
+        /// <param name="key">ключ</param>
+        /// <returns>содержимое</returns>
+        public byte[] GetContent(string key)
+        {
+            // для начала попробуем декодировать из ключа
+            byte[] content;
+            if (key.TryDecodeKey(out content))
+                return content;
+            return Content.GetValue(key);
         }
     }
 }

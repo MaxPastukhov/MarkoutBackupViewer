@@ -18,7 +18,7 @@ namespace MarkoutBackupViewer.Forms.Controls
             Text = document.Name;
             SelectedImageIndex = ImageIndex = Program.Icons[document.Icon(), "document.png"];
             // добавим поддокументы
-            foreach (var child in document.Children)
+            foreach (var child in document.Children.Sort())
                 Nodes.Add(new DocumentTreeNode(child));
         }
 
@@ -26,15 +26,5 @@ namespace MarkoutBackupViewer.Forms.Controls
         /// документ
         /// </summary>
         public readonly Document Document;
-
-        /// <summary>
-        /// обновить картинки
-        /// </summary>
-        public void UpdateImages()
-        {
-            SelectedImageIndex = ImageIndex = Program.Icons[Document.Icon(), "document.png"];
-            foreach (var node in Nodes)
-                ((DocumentTreeNode)node).UpdateImages();
-        }
     }
 }

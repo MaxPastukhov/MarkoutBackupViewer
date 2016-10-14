@@ -33,7 +33,6 @@ namespace MarkoutBackupViewer.Forms.Controls
                 TreeView.AfterSelect += treeView_AfterSelect;
                 TreeView.MouseDown += TreeView_MouseDown;
                 Controls.Add(TreeView);
-                Program.Icons.Updated += Icons_Updated;
             }
         }
 
@@ -53,7 +52,7 @@ namespace MarkoutBackupViewer.Forms.Controls
                 _backup = value;
                 TreeView.Nodes.Clear();
                 if (value != null)
-                    foreach (var document in value.RootDocument.Children)
+                    foreach (var document in value.RootDocument.Children.Sort())
                         TreeView.Nodes.Add(new DocumentTreeNode(document));
             }
         }
@@ -74,17 +73,6 @@ namespace MarkoutBackupViewer.Forms.Controls
         {
             if (DocumentSelected != null)
                 DocumentSelected(this, new EventArgs<Document>(((DocumentTreeNode) e.Node).Document));
-        }
-
-        /// <summary>
-        /// список иконок обновлен
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Icons_Updated(object sender, EventArgs e)
-        {
-            foreach (var node in TreeView.Nodes)
-                ((DocumentTreeNode)node).UpdateImages();
         }
 
         /// <summary>

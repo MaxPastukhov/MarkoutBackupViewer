@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using MarkoutBackupViewer.Data;
 
 namespace MarkoutBackupViewer
@@ -137,7 +138,6 @@ namespace MarkoutBackupViewer
         }
 
         #endregion
-
 
         #region string Join(this IEnumerable<string> list, string separator)
 
@@ -313,6 +313,20 @@ namespace MarkoutBackupViewer
             if (data != null)
                 return encoding.GetString(data);
             return null;
+        }
+
+        #endregion
+
+        #region bool ReadBool(this Stream stream)
+
+        /// <summary>
+        /// чтение bool
+        /// </summary>
+        /// <param name="stream">поток</param>
+        /// <returns>значение</returns>
+        public static bool ReadBool(this Stream stream)
+        {
+            return stream.ReadByte() == 1;
         }
 
         #endregion
@@ -564,6 +578,81 @@ namespace MarkoutBackupViewer
         public static string ToSafeFileName(this string source)
         {
             return source.Replace(":", "").Replace("/", "").Replace(@"\", "").Replace("..", "").Replace("?", "");
+        }
+
+        #endregion
+
+        #region IEnumerable<Note> Sort(this IEnumerable<Note> notes)
+
+        /// <summary>
+        /// сортировка заметок по названию
+        /// </summary>
+        /// <param name="notes"></param>
+        /// <returns></returns>
+        public static IEnumerable<Document> Sort(this IEnumerable<Document> notes)
+        {
+            var sorted = new List<Document>(notes);
+            sorted.Sort((x, y) => x.CompareTo(y));
+            return sorted;
+        }
+
+        #endregion
+
+        #region int NaturalCompareTo(this string x, string y)
+
+        /// <summary>
+        /// натуральное сравнение строк
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static int NaturalCompareTo(this string x, string y)
+        {
+            x = x ?? "";
+            y = y ?? "";
+            Dictionary<string, string[]> table = new Dictionary<string, string[]>();
+            if (x == y)
+                return 0;
+            // проверим - можно ли сравнить просто как double?
+            double dx, dy;
+            if (double.TryParse(x, out dx) && double.TryParse(y, out dy))
+                return dx.CompareTo(dy);
+            // сделаем натуральную сортирвку
+            string[] x1, y1;
+            if (!table.TryGetValue(x, out x1))
+            {
+                x1 = Regex.Split(x.Replace(" ", ""), "([0-9]+)");
+                table.Add(x, x1);
+            }
+            if (!table.TryGetValue(y, out y1))
+            {
+                y1 = Regex.Split(y.Replace(" ", ""), "([0-9]+)");
+                table.Add(y, y1);
+            }
+            for (int i = 0; i < x1.Length && i < y1.Length; i++)
+                if (x1[i] != y1[i])
+                    return PartCompare(x1[i], y1[i]);
+            if (y1.Length < x1.Length)
+                return 1;
+            if (x1.Length < y1.Length)
+                return -1;
+            return 0;
+        }
+
+        /// <summary>
+        /// сравнение частей строк
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        private static int PartCompare(string left, string right)
+        {
+            int x, y;
+            if (!int.TryParse(left, out x))
+                return left.CompareTo(right);
+            if (!int.TryParse(right, out y))
+                return left.CompareTo(right);
+            return x.CompareTo(y);
         }
 
         #endregion

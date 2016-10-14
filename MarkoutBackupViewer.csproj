@@ -35,9 +35,6 @@
     <ApplicationIcon>box.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK">
-      <HintPath>Lib\AWSSDK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,11 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Background.cs" />
-    <Compile Include="Common\ContentStorage.cs" />
-    <Compile Include="Common\AmazonS3.cs" />
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\EventArgs.cs" />
-    <Compile Include="Common\IconStorage.cs" />
+    <Compile Include="Common\Icons.cs" />
     <Compile Include="Common\LocalContentStorage.cs" />
     <Compile Include="Common\TempFile.cs" />
     <Compile Include="Data\Backup.cs" />
@@ -115,6 +110,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SDI.cs" />
     <EmbeddedResource Include="Forms\Controls\BackupControl.resx">
       <DependentUpon>BackupControl.cs</DependentUpon>
@@ -139,14 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -156,21 +151,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\document.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\paperclip.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\photo_scenery.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\book_blue.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="box.ico" />

@@ -82,7 +82,7 @@ namespace MarkoutBackupViewer
             // попробуем загрузить
             try
             {
-                Backup = new Backup(filePath, Program.ContentStorage);
+                Backup = new Backup(filePath);
             }
             catch (Exception exception)
             {

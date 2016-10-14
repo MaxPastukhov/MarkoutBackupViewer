@@ -2,6 +2,7 @@
 #define ApplicationDir "Markout Backup Viewer"
 #define ApplicationNameWithoutSpaces "MarkoutBackupViewer"
 #define ApplicationBinaryDir "c:\MarkoutBackupViewer\trunk\Build"
+#define InstallationStaticDir "c:\MarkoutBackupViewer\trunk\Static"
 #define OutputDir "c:\MarkoutBackupViewer\trunk\Install\"
 #define LicenseFile "c:\MarkoutBackupViewer\trunk\Install\License.txt"
 #define HomePageUrl "https://markout.org/"
@@ -33,8 +34,9 @@ Name: "quicklaunchicon"; Description: "Add shortcut to quicklaunch panel"; Group
 Source: "{#ApplicationBinaryDir}\{#ExeFileName}"; DestDir: "{app}"; Flags: ignoreversion
 ; лицензия
 Source: "{#LicenseFile}"; DestDir: "{app}"; DestName: "license.txt"; Flags: ignoreversion
-; aws
-Source: "{#ApplicationBinaryDir}\AWSSDK.dll"; DestDir: "{app}"; Flags: ignoreversion
+; иконки
+Source: "{#InstallationStaticDir}\icons.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#InstallationStaticDir}\icons.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [INI]
 Filename: "{app}\HomePage.url"; Section: "InternetShortcut"; Key: "URL"; String: "{#HomePageUrl}"

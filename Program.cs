@@ -14,11 +14,9 @@ namespace MarkoutBackupViewer
         static void Main(string[] args)
         {
             IsRunning = true;
-            // хранилище контента
-            ContentStorage = new ContentStorage(SettingsFolder.CombinePath("Content"));
             // менеджер документов
             SDI = new SDI(args);
-            Icons = new IconStorage(SettingsFolder.CombinePath("Icons"), "https://markout.org/static/icons/16x16/");
+            Icons = new Icons(Application.StartupPath.CombinePath("icons.png"), Application.StartupPath.CombinePath("icons.txt"));
             // покажем основное окно приложения
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -47,11 +45,6 @@ namespace MarkoutBackupViewer
         }
 
         /// <summary>
-        /// хранилище контента документов
-        /// </summary>
-        public static ContentStorage ContentStorage { get; private set; }
-
-        /// <summary>
         /// Single Document Interface
         /// </summary>
         public static SDI SDI { get; private set; }
@@ -59,6 +52,6 @@ namespace MarkoutBackupViewer
         /// <summary>
         /// хранилище иконок
         /// </summary>
-        public static IconStorage Icons { get; private set; }
+        public static Icons Icons { get; private set; }
     }
 }

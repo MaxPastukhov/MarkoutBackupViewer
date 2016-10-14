@@ -140,14 +140,6 @@ namespace MarkoutBackupViewer.Data
         }
 
         /// <summary>
-        /// порядок сортировки
-        /// </summary>
-        public int SortOrder
-        {
-            get { return this["SortOrder"].ToInt32(); }
-        }
-
-        /// <summary>
         /// дата/время создания
         /// </summary>
         public DateTime Created
@@ -214,7 +206,7 @@ namespace MarkoutBackupViewer.Data
             {
                 if (!ContentKey.HasValue())
                     return null;
-                return Backup.Decrypt(Backup.Content[ContentKey]);
+                return Backup.Decrypt(Backup.GetContent(ContentKey));
             }
         }
 
@@ -244,6 +236,36 @@ namespace MarkoutBackupViewer.Data
                 foreach (var id in Backup.Table.SelectParent(ID))
                     yield return Backup[id];
             }
+        }
+
+        /// <summary>
+        /// порядок сортировки
+        /// </summary>
+        public int SortOrder
+        {
+            get
+            {
+                // папки всегда чуть выше
+                if (Type == Types.Folder)
+                    return (this["SortOrder"] ?? "1").ToInt32();
+                return this["SortOrder"].ToInt32();
+            }
+        }
+
+        /// <summary>
+        /// сравнение с другим документом
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public int CompareTo(Document document)
+        {
+            var compare = -SortOrder.CompareTo(document.SortOrder);
+            if (compare != 0)
+                return compare;
+            compare = Name.NaturalCompareTo(document.Name);
+            if (compare != 0)
+                return compare;
+            return (ShortID ?? "").NaturalCompareTo(document.ShortID ?? "");
         }
     }
 }
