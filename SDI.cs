@@ -106,6 +106,11 @@ namespace MarkoutBackupViewer
                     }
                 }
             }
+			if (Backup.RootDocument == null)
+            {
+                MessageBox.Show("There are no documents in this backup", "Empty backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             // получилось загрузить, уведомим
             if (Opened != null)
                 Opened(this, new EventArgs());
