@@ -4,21 +4,12 @@ using System.Text;
 
 namespace MarkoutBackupViewer.Common
 {
-    /// <summary>
-    /// шифратор
-    /// </summary>
     public class Crypto
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
-        /// <param name="password">пароль</param>
         public Crypto(string password)
         {
-            // Пустой пароль - отключение шифрации
             if (!password.HasValue())
                 return;
-            // создадим шифровщик и расщифровщик
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
             byte[] keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(password));
             TripleDESCryptoServiceProvider cryptoProvider = new TripleDESCryptoServiceProvider
@@ -30,16 +21,8 @@ namespace MarkoutBackupViewer.Common
             Decryptor = cryptoProvider.CreateDecryptor();
         }
         
-        /// <summary>
-        /// расшифровщик
-        /// </summary>
         private readonly ICryptoTransform Decryptor;
 
-        /// <summary>
-        /// дешифрация блока
-        /// </summary>
-        /// <param name="data">данные</param>
-        /// <returns></returns>
         public byte[] Decrypt(byte[] data)
         {
             if (data == null)
@@ -56,11 +39,6 @@ namespace MarkoutBackupViewer.Common
             }
         }
 
-        /// <summary>
-        /// шифрация строки
-        /// </summary>
-        /// <param name="text">строка</param>
-        /// <returns></returns>
         public string Decrypt(string text)
         {
             try

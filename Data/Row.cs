@@ -1,36 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace MarkoutBackupViewer.Data
 {
-    /// <summary>
-    /// строка таблицы данных
-    /// </summary>
-    public class Row
+    public class Row : IEnumerable<KeyValuePair<string,string>>
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
-        /// <param name="id"></param>
         public Row(string id)
         {
             ID = id;
         }
 
-        /// <summary>
-        /// идентификатор
-        /// </summary>
         public readonly string ID;
 
-        /// <summary>
-        /// ячейки
-        /// </summary>
         private readonly Dictionary<string,string> Cells = new Dictionary<string, string>();
 
-        /// <summary>
-        /// доступ к ячейкам
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public string this[string key]
         {
             get { return Cells.GetValue(key); }
@@ -41,6 +24,16 @@ namespace MarkoutBackupViewer.Data
                 else
                     Cells.Remove(key);
             }
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return Cells.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

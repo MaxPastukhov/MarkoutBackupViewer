@@ -5,22 +5,13 @@ using MarkoutBackupViewer.Data;
 
 namespace MarkoutBackupViewer.Forms.Viewers
 {
-    /// <summary>
-    /// просмотрщик заметки
-    /// </summary>
     public partial class NoteViewer : UserControl, IViewer
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
         public NoteViewer()
         {
             InitializeComponent();
         }
 
-        /// <summary>
-        /// документ
-        /// </summary>
         public Document Document
         {
             get { return _document; }
@@ -33,12 +24,7 @@ namespace MarkoutBackupViewer.Forms.Viewers
         }
 
         private Document _document;
-
-        /// <summary>
-        /// ресайз
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void NoteViewer_Resize(object sender, EventArgs e)
         {
             richTextBox.Width = Width - richTextBox.Left*2;

@@ -4,22 +4,13 @@ using MarkoutBackupViewer.Forms.Viewers;
 
 namespace MarkoutBackupViewer.Forms.Controls
 {
-    /// <summary>
-    /// вьювер документов
-    /// </summary>
     public partial class DocumentViewerControl : UserControl
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
         public DocumentViewerControl()
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// документ
-        /// </summary>
+        
         public Document Document
         {
             get { return _document; }
@@ -27,9 +18,7 @@ namespace MarkoutBackupViewer.Forms.Controls
             {
                 _document = value;
                 Visible = value != null;
-                // уберем старый редактор
                 viewerPanel.Controls.Clear();
-                // добавим новый редактор
                 var viewer = GetViewer(value);
                 if (viewer != null)
                 {
@@ -43,9 +32,6 @@ namespace MarkoutBackupViewer.Forms.Controls
 
         private Document _document;
 
-        /// <summary>
-        /// активный вьювер
-        /// </summary>
         private IViewer GetViewer(Document document)
         {
             if (document == null)

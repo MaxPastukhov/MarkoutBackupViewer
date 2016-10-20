@@ -3,14 +3,8 @@ using System.Collections.Generic;
 
 namespace MarkoutBackupViewer.Export
 {
-    /// <summary>
-    /// список вариантов экспорта бекапов
-    /// </summary>
     public static class Exporters
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
         static Exporters()
         {
             foreach (var type in typeof (Exporters).Assembly.GetTypes())
@@ -29,14 +23,8 @@ namespace MarkoutBackupViewer.Export
             }
         }
 
-        /// <summary>
-        /// варианты экспорта
-        /// </summary>
         private static readonly List<Exporter> Items = new List<Exporter>();
 
-        /// <summary>
-        /// все доступные варианты экспорта бекапов
-        /// </summary>
         public static IEnumerable<Exporter> All
         {
             get { return Items; }

@@ -1,126 +1,67 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MarkoutBackupViewer.Data.Versions;
 
 namespace MarkoutBackupViewer.Data
 {
-    /// <summary>
-    /// документ
-    /// </summary>
-    public class Document
+    public class Document : IEnumerable<KeyValuePair<string,string>>
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
-        /// <param name="backup">бекап</param>
-        /// <param name="row">строка в таблице документов</param>
         public Document(Backup backup, Row row)
         {
             Backup = backup;
             Row = row;
+            TextVersions = new DocumentPropertyVersions<DocumentTextVersion>(this, "Text");
+            ContentVersions = new DocumentPropertyVersions<DocumentContentVersion>(this, "Content");
         }
 
-        /// <summary>
-        /// бекап
-        /// </summary>
         public readonly Backup Backup;
 
-        /// <summary>
-        /// строка
-        /// </summary>
         private readonly Row Row;
 
-        /// <summary>
-        /// свойства документа
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private string this[string key]
+        public string this[string key]
         {
             get { return Row[key]; }
         }
 
-        /// <summary>
-        /// идентификатор
-        /// </summary>
         public string ID
         {
             get { return Row.ID; }
         }
 
-        /// <summary>
-        /// короткий идентификатор
-        /// </summary>
         public string ShortID
         {
             get { return this["ShortID"]; }
         }
 
-        /// <summary>
-        /// тип документа
-        /// </summary>
         public string Type
         {
             get { return this["Type"] ?? "Note"; }
         }
 
-        /// <summary>
-        /// типы
-        /// </summary>
         public static class Types
         {
-            /// <summary>
-            /// корневая заметка
-            /// </summary>
             public const string Root = "Root";
-
-            /// <summary>
-            /// корзина
-            /// </summary>
-            public const string Trash = "Trash";
-
-            /// <summary>
-            /// заметка
-            /// </summary>
+            
             public const string Note = "Note";
 
-            /// <summary>
-            /// папка
-            /// </summary>
             public const string Folder = "Folder";
 
-            /// <summary>
-            /// картинка
-            /// </summary>
             public const string Image = "Image";
 
-            /// <summary>
-            /// приложенный файл
-            /// </summary>
             public const string File = "File";
 
-            /// <summary>
-            /// текстовая заметка
-            /// </summary>
             public const string Text = "Text";
-
-            /// <summary>
-            /// HTML-заметка
-            /// </summary>
+            
             public const string Html = "Html";
         }
 
-        /// <summary>
-        /// бинарный файл?
-        /// </summary>
         public bool IsBinary
         {
             get { return Type == Types.Image || Type == Types.File; }
         }
 
-        /// <summary>
-        /// название
-        /// </summary>
         public string Name
         {
             get
@@ -131,25 +72,16 @@ namespace MarkoutBackupViewer.Data
             }
         }
 
-        /// <summary>
-        /// иконка
-        /// </summary>
         public string Icon
         {
             get { return this["Icon"]; }
         }
 
-        /// <summary>
-        /// дата/время создания
-        /// </summary>
         public DateTime Created
         {
             get { return DateTime.FromBinary(this["Created"].ToInt64()); }
         }
 
-        /// <summary>
-        /// дата/время изменения
-        /// </summary>
         public DateTime Modified
         {
             get
@@ -160,75 +92,40 @@ namespace MarkoutBackupViewer.Data
             }
         }
 
-        /// <summary>
-        /// дата/время удаления в корзину
-        /// </summary>
-        public DateTime? Trashed
-        {
-            get
-            {
-                if (!this["Trashed"].HasValue())
-                    return null;
-                return DateTime.FromBinary(this["Trashed"].ToInt64());
-            }
-        }
+        public readonly DocumentPropertyVersions<DocumentTextVersion> TextVersions;
 
-        /// <summary>
-        /// текст заметки
-        /// </summary>
         public string Text
         {
-            get { return Backup.Decrypt(this["Text"]); }
+            get { return TextVersions.Current != null ? TextVersions.Current.Text : Backup.Decrypt(this["Text"]); }
         }
 
-        /// <summary>
-        /// ключ бинарного контента
-        /// </summary>
-        public string ContentKey
-        {
-            get { return this["ContentKey"]; }
-        }
+        public readonly DocumentPropertyVersions<DocumentContentVersion> ContentVersions;
 
-        /// <summary>
-        /// размер бинарного контента
-        /// </summary>
-        public int ContentSize
-        {
-            get { return this["ContentLength"].ToInt32(); }
-        }
-
-        /// <summary>
-        /// бинарное содержимое вроде картинок, файлов и так далее
-        /// </summary>
         public byte[] Content
         {
-            get
-            {
-                if (!ContentKey.HasValue())
-                    return null;
-                return Backup.Decrypt(Backup.GetContent(ContentKey));
-            }
+            get { return ContentKey.HasValue() ? Backup.GetContent(ContentKey) : null; }
         }
 
-        /// <summary>
-        /// теги
-        /// </summary>
+        public string ContentKey
+        {
+            get { return ContentVersions.Current != null ? ContentVersions.Current.Key : this["ContentKey"]; }
+        }
+
+        public int ContentSize
+        {
+            get { return ContentVersions.Current != null ? ContentVersions.Current.Size : this["ContentLength"].ToInt32(); }
+        }
+
         public string[] Tags
         {
             get { return (this["Tags"] ?? "").Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray(); }
         }
 
-        /// <summary>
-        /// родительский документ
-        /// </summary>
         public Document Parent
         {
             get { return Backup[this["Parent"]]; }
         }
 
-        /// <summary>
-        /// поддокументы
-        /// </summary>
         public IEnumerable<Document> Children
         {
             get
@@ -238,9 +135,6 @@ namespace MarkoutBackupViewer.Data
             }
         }
 
-        /// <summary>
-        /// порядок сортировки
-        /// </summary>
         public int SortOrder
         {
             get
@@ -252,20 +146,25 @@ namespace MarkoutBackupViewer.Data
             }
         }
 
-        /// <summary>
-        /// сравнение с другим документом
-        /// </summary>
-        /// <param name="document"></param>
-        /// <returns></returns>
         public int CompareTo(Document document)
         {
-            var compare = -SortOrder.CompareTo(document.SortOrder);
+            var compare = SortOrder.CompareTo(document.SortOrder);
             if (compare != 0)
                 return compare;
             compare = Name.NaturalCompareTo(document.Name);
             if (compare != 0)
                 return compare;
             return (ShortID ?? "").NaturalCompareTo(document.ShortID ?? "");
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return Row.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

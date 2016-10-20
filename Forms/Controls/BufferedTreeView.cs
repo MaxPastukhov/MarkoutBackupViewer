@@ -4,9 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace MarkoutBackupViewer.Forms.Controls
 {
-    /// <summary>
-    /// дерево без мерцания
-    /// </summary>
     public class BufferedTreeView : TreeView
     {
         protected override void OnHandleCreated(EventArgs e)

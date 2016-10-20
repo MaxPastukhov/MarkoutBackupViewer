@@ -46,16 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Background.cs" />
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Icons.cs" />
-    <Compile Include="Common\LocalContentStorage.cs" />
-    <Compile Include="Common\TempFile.cs" />
     <Compile Include="Data\Backup.cs" />
     <Compile Include="Data\Document.cs" />
     <Compile Include="Data\Row.cs" />
     <Compile Include="Data\Table.cs" />
+    <Compile Include="Data\Versions\DocumentContentVersion.cs" />
+    <Compile Include="Data\Versions\DocumentPropertyVersions.cs" />
+    <Compile Include="Data\Versions\DocumentTextVersion.cs" />
     <Compile Include="Export\Exporter.cs" />
     <Compile Include="Export\ExporterAttribute.cs" />
     <Compile Include="Export\Exporters.cs" />

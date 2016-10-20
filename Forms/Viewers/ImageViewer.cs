@@ -5,22 +5,13 @@ using MarkoutBackupViewer.Data;
 
 namespace MarkoutBackupViewer.Forms.Viewers
 {
-    /// <summary>
-    /// просмотрщик картинок
-    /// </summary>
     public partial class ImageViewer : UserControl, IViewer
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
         public ImageViewer()
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// документ
-        /// </summary>
+        
         public Document Document
         {
             get { return _document; }

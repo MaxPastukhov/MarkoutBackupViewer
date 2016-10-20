@@ -7,14 +7,8 @@ using MarkoutBackupViewer.Export;
 
 namespace MarkoutBackupViewer.Forms.Controls
 {
-    /// <summary>
-    /// контрол дерева документов
-    /// </summary>
     public partial class DocumentTreeControl : UserControl
     {
-        /// <summary>
-        /// конструктор
-        /// </summary>
         public DocumentTreeControl()
         {
             InitializeComponent();
@@ -36,14 +30,8 @@ namespace MarkoutBackupViewer.Forms.Controls
             }
         }
 
-        /// <summary>
-        /// дерево документов
-        /// </summary>
         private readonly TreeView TreeView;
 
-        /// <summary>
-        /// бекап
-        /// </summary>
         public Backup Backup 
         {
             get { return _backup; }
@@ -59,47 +47,26 @@ namespace MarkoutBackupViewer.Forms.Controls
 
         private Backup _backup;
 
-        /// <summary>
-        /// выбран другой документ
-        /// </summary>
         public event EventHandler<EventArgs<Document>> DocumentSelected;
 
-        /// <summary>
-        /// выбран другой документ
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (DocumentSelected != null)
                 DocumentSelected(this, new EventArgs<Document>(((DocumentTreeNode) e.Node).Document));
         }
 
-        /// <summary>
-        /// контекстное меню по правой кнопке
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TreeView_MouseDown(object sender, MouseEventArgs e)
         {
-            // сохраним последние кнопки
             var hitInfo = TreeView.HitTest(e.Location);
             if (hitInfo.Node == null)
                 return;
-            // по правой кнопке - контекстное меню
             if (e.Button == MouseButtons.Right)
             {
-                // выберем узел под мышью
                 TreeView.SelectedNode = hitInfo.Node;
                 contextMenu.Show(this, e.Location);
             }
         }
-
-        /// <summary>
-        /// сохранить выбранный документ
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var node = TreeView.SelectedNode as DocumentTreeNode;
